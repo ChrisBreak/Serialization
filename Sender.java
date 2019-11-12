@@ -10,6 +10,7 @@ import java.lang.reflect.*;
 import org.jdom2.output.XMLOutputter;
 import myClasses.*;
 import java.io.*;
+import java.net.*;
 
 public class Sender {
 
@@ -20,26 +21,29 @@ public class Sender {
 		aPlane.setSeats(20);
 		Airport yyc = new Airport();
 		yyc.setLocation("Calgary");
-		Pilot someP = new Pilot("John", new int[]{1,2,3}, yyc);
-		aPlane.setPilot(someP);
-		serializer.serialize(aPlane);
+		Pilot someP = new Pilot("John", 23, new int[]{1,2,3});
+		Runway aRun = new Runway(1000, 200, yyc);
+		Runway aRun2 = new Runway(1200, 240, yyc);
+		Runway[] runways = new Runway[]{aRun, aRun2};
+		yyc.setRunways(runways);
+		serializer.serialize(yyc);
 		Document serialDoc = serializer.getDocument();
 
-		serializer = new Serializer();
-		Deserializer des = new Deserializer();
-		des.deserialize(serialDoc);
-		serializer.serialize(des.getObject());
-		Document deserialDoc = serializer.getDocument();
-
 		FileOutputStream fosSerial = null;
-		FileOutputStream fosDeserial = null;
+		PrintWriter outputStream;
+
 		try {
 			fosSerial = new FileOutputStream("Serialized.xml");
-			fosDeserial = new FileOutputStream("Deserialized.xml");
 			XMLOutputter xmlOut = new XMLOutputter();
 			//xmlOut.output(doc, System.out);
 			xmlOut.output(serialDoc, fosSerial);
-			xmlOut.output(deserialDoc, fosDeserial);
+
+			Socket socket = new Socket("localhost", 8888);
+			outputStream = new PrintWriter(new DataOutputStream(socket.getOutputStream()));
+			xmlOut.output(serialDoc, outputStream);
+			outputStream.flush();
+			outputStream.close();
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
