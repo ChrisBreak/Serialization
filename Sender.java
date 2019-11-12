@@ -62,17 +62,7 @@ public class Sender {
 		int seats = (int) parsePrimitive(int.class, inputArr[1].trim());
 		boolean active = (boolean) parsePrimitive(boolean.class, inputArr[2].trim());
 		Airplane airP = new Airplane(id, seats, active);
-
-		System.out.println("sending object...");
-		try { Thread.sleep(1500); }
-		catch (InterruptedException e) { System.out.println(e); }
-		Serializer serializer = new Serializer();
-		serializer.serialize(airP);
-		Inspector inspector = new Inspector();
-		inspector.inspect(airP, true);
-		Document serialDoc = serializer.getDocument();
-		send(serialDoc);
-		System.out.println("sent object successfully\n");
+		send(airP);
 	}
 
 	private void sendObjectArrayPrimitive() {
@@ -90,17 +80,7 @@ public class Sender {
 			ratings[i] = (int) parsePrimitive(int.class, ratingArr[i].trim());
 		}
 		Pilot pilot = new Pilot(name, age, ratings);
-
-		System.out.println("sending object...");
-		try { Thread.sleep(1500); }
-		catch (InterruptedException e) { System.out.println(e); }
-		Serializer serializer = new Serializer();
-		serializer.serialize(pilot);
-		Inspector inspector = new Inspector();
-		inspector.inspect(pilot, true);
-		Document serialDoc = serializer.getDocument();
-		send(serialDoc);
-		System.out.println("sent object successfully\n");
+		send(pilot);
 	}
 
 	private void sendObjectReference() {
@@ -115,18 +95,27 @@ public class Sender {
 
 	}
 
-	private void send(Document doc) {
+	private void send(Object obj) {
+		System.out.println("sending object...");
+		try { Thread.sleep(1500); }
+		catch (InterruptedException e) { System.out.println(e); }
+		Serializer serializer = new Serializer();
+		serializer.serialize(obj);
+		Inspector inspector = new Inspector();
+		inspector.inspect(obj, true);
+		Document serialDoc = serializer.getDocument();
+		System.out.println("sent object successfully\n");
 		FileOutputStream fosSerial = null;
 		PrintWriter outputStream;
 		try {
 			fosSerial = new FileOutputStream("Serialized.xml");
 			XMLOutputter xmlOut = new XMLOutputter();
 			//xmlOut.output(doc, System.out);
-			xmlOut.output(doc, fosSerial);
+			xmlOut.output(serialDoc, fosSerial);
 
 			Socket socket = new Socket("localhost", 8888);
 			outputStream = new PrintWriter(new DataOutputStream(socket.getOutputStream()));
-			xmlOut.output(doc, outputStream);
+			xmlOut.output(serialDoc, outputStream);
 			outputStream.flush();
 			outputStream.close();
 
