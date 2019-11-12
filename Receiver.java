@@ -59,13 +59,17 @@ public class Receiver {
 				serializer.serialize(des.getObject());
 				Document deserialDoc = serializer.getDocument();
 				System.out.println("received object...");
+				try { Thread.sleep(1500); }
+				catch (InterruptedException e) { System.out.println(e); }
 				Inspector inspector = new Inspector();
 				inspector.inspect(des.getObject(), true);
 
 				FileOutputStream fosDeserial = new FileOutputStream("Deserialized.xml");
 				XMLOutputter xmlOut = new XMLOutputter();
+				System.out.print("xml: ");
+				xmlOut.output(deserialDoc, System.out);
 				xmlOut.output(deserialDoc, fosDeserial);
-				
+				System.out.println("");
 			}
 		}
 		catch (Exception e) {

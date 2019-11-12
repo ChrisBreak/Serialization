@@ -12,6 +12,7 @@ import myClasses.*;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Sender {
 
@@ -92,7 +93,7 @@ public class Sender {
 		int length = (int) parsePrimitive(int.class, inputArr[0].trim());
 		int width = (int) parsePrimitive(int.class, inputArr[1].trim());
 		System.out.println("set Airport(String location)\nenter location");
-		String location = getUserInput().trim();
+		String location = getUserInput();
 		Airport airport = new Airport();
 		airport.setLocation(location);
 		Runway aRun = new Runway(length, width, airport);
@@ -100,11 +101,34 @@ public class Sender {
 	}
 
 	private Object createAirport() {
-		return null;
+		System.out.println("object to send: Airport(String location, Airplane[] onSite)");
+		System.out.println("enter location");
+		String location = getUserInput();
+		System.out.println("enter length of Airplane[] onSite");
+		int arrLength = (int) parsePrimitive(int.class, getUserInput());
+		Airplane[] onSite = new Airplane[arrLength];
+		for (int i = 0; i < arrLength; i++) {
+			onSite[i] = (Airplane) createAirplane();
+		}
+		Airport airport = new Airport(location, onSite);
+		return airport;
 	}
 
 	private Object createCollection() {
-		return null;
+		System.out.println("enter length of collection");
+		int arrLength = (int) parsePrimitive(int.class, getUserInput());
+		System.out.println("\nChoose type of collection:\nA - Airplane\nB - Runway");
+		String input = getUserInput();
+		ArrayList<Object> objCollect = new ArrayList<Object>(arrLength);
+		for (int i = 0; i < arrLength; i++) {
+			if (input.equalsIgnoreCase("a")) {
+				objCollect.add(createAirplane());
+			}
+			else {
+				objCollect.add(createRunway());
+			}
+		}
+		return objCollect;
 	}
 
 	private void send(Object obj) {
@@ -116,13 +140,13 @@ public class Sender {
 		Inspector inspector = new Inspector();
 		inspector.inspect(obj, true);
 		Document serialDoc = serializer.getDocument();
-		System.out.println("sent object successfully\n");
 		FileOutputStream fosSerial = null;
 		PrintWriter outputStream;
 		try {
 			fosSerial = new FileOutputStream("Serialized.xml");
 			XMLOutputter xmlOut = new XMLOutputter();
-			//xmlOut.output(doc, System.out);
+			System.out.print("xml: ");
+			xmlOut.output(serialDoc, System.out);
 			xmlOut.output(serialDoc, fosSerial);
 
 			Socket socket = new Socket("localhost", 8888);
@@ -130,6 +154,7 @@ public class Sender {
 			xmlOut.output(serialDoc, outputStream);
 			outputStream.flush();
 			outputStream.close();
+			System.out.println("sent object successfully\n");
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -141,7 +166,7 @@ public class Sender {
 
 	private String getUserInput() {
 		Scanner sc = new Scanner(System.in);
-		return sc.nextLine();
+		return sc.nextLine().trim();
 	}
 
 	private Object parsePrimitive(Class objClass, String value) {
