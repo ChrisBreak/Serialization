@@ -1,19 +1,26 @@
+//class with array of objects
+
 package myClasses;
 public class Airport {
-  private Hangar[] hangars;
   private String location;
+  private Airplane[] onSite;
+  private Runway[] runways;
 
   public Airport(){
-    
+
   }
-  public Airport(Hangar[] hangars, String location) {
-    this.hangars = hangars;
+  public Airport(String location, Airplane[] onSite, Runway[] runways) {
     this.location = location;
-  }
-  public void setHangars(Hangar[] hangars) {
-    this.hangars = hangars;
+    this.onSite = onSite;
+    this.runways = runways;
   }
   public void setLocation(String location) {
     this.location = location;
+  }
+  public void setOnsite(Airplane[] onSite) {
+    this.onSite = onSite;
+  }
+  public void setRunways(Runway[] runways) {
+    this.runways = runways;
   }
 }
