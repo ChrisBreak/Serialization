@@ -11,18 +11,19 @@ import org.jdom2.output.XMLOutputter;
 import myClasses.*;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class Sender {
 
 	public void start() {
 		while(true) {
-			System.out.println("Choose object to send: (enter letter)\n"
+			System.out.println("\nChoose object to send: (enter letter)\n"
 				+"A - object with primitive variables\n"
 				+"B - object with array of primitives variable\n"
 				+"C - object with object reference variable\n"
 				+"D - object with array of object references variable\n"
 				+"E - collection of object references\n"
-				+"Q - to quit\n");
+				+"Q - to quit");
 
 			String input = getUserInput();
 			if (input.equalsIgnoreCase("q")) {
@@ -33,19 +34,19 @@ public class Sender {
 
 			switch (input) {
 				case "a":
-					sendObjectPrimitive();
+					send(createAirplane());
 					break;
 				case "b":
-					sendObjectArrayPrimitive();
+					send(createPilot());
 					break;
 				case "c":
-					sendObjectReference();
+					send(createRunway());
 					break;
 				case "d":
-					sendObjectArrayReference();
+					send(createAirport());
 					break;
 				case "e":
-					sendObjectCollection();
+					send(createCollection());
 					break;
 				default:
 					System.out.println("Invalid input");
@@ -53,7 +54,7 @@ public class Sender {
 		}
 	}
 
-	private void sendObjectPrimitive() {
+	private Object createAirplane() {
 		System.out.println("object to send: Airplane(int id, int seats, boolean active)");
 		System.out.println("enter id, seats, active ");
 		String input = getUserInput();
@@ -62,10 +63,10 @@ public class Sender {
 		int seats = (int) parsePrimitive(int.class, inputArr[1].trim());
 		boolean active = (boolean) parsePrimitive(boolean.class, inputArr[2].trim());
 		Airplane airP = new Airplane(id, seats, active);
-		send(airP);
+		return airP;
 	}
 
-	private void sendObjectArrayPrimitive() {
+	private Object createPilot() {
 		System.out.println("object to send: Pilot(String name, int age, int[] ratings)");
 		System.out.println("enter name, age, [ratings");
 		String input = getUserInput();
@@ -80,19 +81,30 @@ public class Sender {
 			ratings[i] = (int) parsePrimitive(int.class, ratingArr[i].trim());
 		}
 		Pilot pilot = new Pilot(name, age, ratings);
-		send(pilot);
+		return pilot;
 	}
 
-	private void sendObjectReference() {
-
+	private Object createRunway() {
+		System.out.println("object to send: Runway(int length, int width, Airport airport)");
+		System.out.println("enter length, width");
+		String input = getUserInput();
+		String[] inputArr = input.split(",", 2);
+		int length = (int) parsePrimitive(int.class, inputArr[0].trim());
+		int width = (int) parsePrimitive(int.class, inputArr[1].trim());
+		System.out.println("set Airport(String location)\nenter location");
+		String location = getUserInput().trim();
+		Airport airport = new Airport();
+		airport.setLocation(location);
+		Runway aRun = new Runway(length, width, airport);
+		return aRun;
 	}
 
-	private void sendObjectArrayReference() {
-
+	private Object createAirport() {
+		return null;
 	}
 
-	private void sendObjectCollection() {
-
+	private Object createCollection() {
+		return null;
 	}
 
 	private void send(Object obj) {
