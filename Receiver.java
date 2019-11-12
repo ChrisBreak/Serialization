@@ -18,44 +18,55 @@ public class Receiver {
 
 	public static void main(String[] args) {
 
-		DataInputStream inputStream;
-		ServerSocket serverSocket;
-
 		try {
 			// Listen on port 8888
-			serverSocket = new ServerSocket(8888);
+			ServerSocket serverSocket = new ServerSocket(8888);
 
-			Socket socket = serverSocket.accept();
+			while(true) {
+				System.out.println("waiting for object...");
+				Socket socket = serverSocket.accept();
 
-			inputStream = new DataInputStream(socket.getInputStream());;
-			String recStr = "";
-			OutputStream fw = new FileOutputStream("received.xml");
-		  byte[] response = new byte[50 * 1024];
-			int retValue;
-      int loopCount = 0;
+				DataInputStream inputStream = new DataInputStream(socket.getInputStream());;
+				String recStr = "";
+				OutputStream fw = new FileOutputStream("received.xml");
+			  byte[] response = new byte[50 * 1024];
+				int retValue;
+	      int loopCount = 0;
 
-			while ((retValue = inputStream.read(response, loopCount, 512)) != -1) {
-        loopCount += retValue;
-      }
+				while ((retValue = inputStream.read(response, loopCount, 512)) != -1) {
+	        loopCount += retValue;
+	      }
 
-			fw.write(response, 0, loopCount);
-			fw.flush();
+				String responseStr = new String(response, "UTF-8");
+				if (responseStr.contains("done sending")) {
+					System.out.println("shutting down server...");
+					try { Thread.sleep(1500); }
+					catch (InterruptedException e) { System.out.println(e); }
+					break;
+				}
 
-			inputStream.close();
+				fw.write(response, 0, loopCount);
+				fw.flush();
 
-			SAXBuilder builder = new SAXBuilder();
-			Document jdomDoc = builder.build(new File("received.xml"));
+				inputStream.close();
 
-			Serializer serializer = new Serializer();
-			Deserializer des = new Deserializer();
-			des.deserialize(jdomDoc);
-			serializer.serialize(des.getObject());
-			Document deserialDoc = serializer.getDocument();
+				SAXBuilder builder = new SAXBuilder();
+				Document jdomDoc = builder.build(new File("received.xml"));
 
-			FileOutputStream fosDeserial = new FileOutputStream("Deserialized.xml");
-			XMLOutputter xmlOut = new XMLOutputter();
-			xmlOut.output(deserialDoc, fosDeserial);
+				Serializer serializer = new Serializer();
+				Deserializer des = new Deserializer();
+				des.deserialize(jdomDoc);
+				serializer.serialize(des.getObject());
+				Document deserialDoc = serializer.getDocument();
+				System.out.println("received object...");
+				Inspector inspector = new Inspector();
+				inspector.inspect(des.getObject(), true);
 
+				FileOutputStream fosDeserial = new FileOutputStream("Deserialized.xml");
+				XMLOutputter xmlOut = new XMLOutputter();
+				xmlOut.output(deserialDoc, fosDeserial);
+				
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace(System.out);
