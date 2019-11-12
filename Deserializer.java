@@ -6,11 +6,13 @@ import org.jdom2.*;
 import java.lang.reflect.*;
 import myClasses.*;
 import java.util.List;
+import java.util.IdentityHashMap;
 
 public class Deserializer {
   private Element root;
   private List<Element> children;
   private Object obj;
+  private IdentityHashMap<String, Object> objsDone = new IdentityHashMap<String, Object>();
 
   public void deserialize(Document doc) {
     root = doc.getRootElement();
@@ -25,12 +27,17 @@ public class Deserializer {
 
   private Object initObject(Element el) {
     String className = el.getAttributeValue("class");
+    String classId = el.getAttributeValue("id");
+    if (objsDone.containsKey(classId)) {
+      return objsDone.get(classId);
+    }
     List<Element> classContent = el.getChildren();
     Object retObj = null;
     try {
       Class objClass = Class.forName(className);
       if (!objClass.isArray()) {
         retObj = objClass.newInstance();
+        objsDone.put(classId, retObj);
         for (Element field : classContent) {
           Element value = field.getChild("value");
           Element reference = field.getChild("reference");
@@ -57,6 +64,7 @@ public class Deserializer {
         int arrayLength = Integer.parseInt(el.getAttributeValue("length"));
         Class classType = objClass.getComponentType();
         retObj = Array.newInstance(classType, arrayLength);
+        objsDone.put(classId, retObj);
         if (classType.isPrimitive()) {
           for (int i = 0; i < arrayLength; i++) {
             Element classEl = classContent.get(i);
