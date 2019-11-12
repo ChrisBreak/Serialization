@@ -27,8 +27,6 @@ public class Receiver {
 				Socket socket = serverSocket.accept();
 
 				DataInputStream inputStream = new DataInputStream(socket.getInputStream());;
-				String recStr = "";
-				OutputStream fw = new FileOutputStream("received.xml");
 			  byte[] response = new byte[50 * 1024];
 				int retValue;
 	      int loopCount = 0;
@@ -45,6 +43,7 @@ public class Receiver {
 					break;
 				}
 
+				OutputStream fw = new FileOutputStream("received.xml");
 				fw.write(response, 0, loopCount);
 				fw.flush();
 

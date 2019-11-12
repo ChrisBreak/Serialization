@@ -3,7 +3,7 @@
 //A3
 
 //compile: javac -cp .:jdom2/* *.java
-//run: java -cp .:jdom2/* Sender
+//run: java -cp .:jdom2/* A3Client
 
 import org.jdom2.*;
 import java.lang.reflect.*;

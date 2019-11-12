@@ -16,7 +16,6 @@ public class Serializer {
 			root.addContent(objs.get(i));
 		}
 		Document doc = new Document(root);
-
 		return doc;
 	}
 
@@ -43,9 +42,7 @@ public class Serializer {
 		if(objClass.getDeclaredFields().length>0){
 			root = serializeFields(obj, root);
 		}
-
 		objs.add(root);
-		//this.root.addContent(root);
 	}
 
 	private void serializeArray(Object obj) {
