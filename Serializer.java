@@ -33,6 +33,10 @@ public class Serializer {
 		Element root = new Element("object");
 		Class objClass = obj.getClass();
 		int id = obj.hashCode();
+		if (refs.contains(id)) {
+			return;
+		}
+		refs.add(new Integer(id));
 		root.setAttribute("class", objClass.getName());
 		root.setAttribute("id", String.valueOf(id));
 
@@ -48,6 +52,10 @@ public class Serializer {
 		Element root = new Element("object");
 		Class objClass = obj.getClass();
 		int id = obj.hashCode();
+		if (refs.contains(id)) {
+			return;
+		}
+		refs.add(new Integer(id));
 		root.setAttribute("class", objClass.getName());
 		root.setAttribute("id", String.valueOf(id));
 		root.setAttribute("length", String.valueOf(Array.getLength(obj)));
@@ -70,7 +78,6 @@ public class Serializer {
 					ref.setText(String.valueOf(oId));
 					root.addContent(ref);
 					if (!refs.contains(new Integer(oId))) {
-						refs.add(new Integer(oId));
 						serialize(anOjb);
 					}
         }
@@ -97,7 +104,6 @@ public class Serializer {
 						ref.setText(String.valueOf(fId));
 						el.addContent(ref);
 						if (!refs.contains(new Integer(fId))) {
-							refs.add(new Integer(fId));
 							serialize(fOjb);
 						}
 					}
