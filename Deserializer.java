@@ -61,32 +61,46 @@ public class Deserializer {
         }
       }
       else {
-        int arrayLength = Integer.parseInt(el.getAttributeValue("length"));
-        Class classType = objClass.getComponentType();
-        retObj = Array.newInstance(classType, arrayLength);
-        objsDone.put(classId, retObj);
-        if (classType.isPrimitive()) {
-          for (int i = 0; i < arrayLength; i++) {
-            Element classEl = classContent.get(i);
-            Array.set(retObj, i, PParser.parse(classType, classEl.getText()));
-          }
-        }
-        else {
-          for (int i = 0; i < arrayLength; i++) {
-            Element classEl = classContent.get(i);
-            String ref = classEl.getText();
-            for (Element child : children) {
-              if (child.getAttributeValue("id").equals(ref)) {
-                Array.set(retObj, i, initObject(child));
-                break;
-              }
-            }
-          }
-        }
+        retObj = initArray(el);
       }
     }
     catch (ClassNotFoundException|InstantiationException|IllegalAccessException|NoSuchFieldException|IllegalArgumentException e) {
       e.printStackTrace();
+    }
+    return retObj;
+  }
+
+  private Object initArray(Element el) throws ClassNotFoundException {
+    String className = el.getAttributeValue("class");
+    String classId = el.getAttributeValue("id");
+    if (objsDone.containsKey(classId)) {
+      return objsDone.get(classId);
+    }
+    List<Element> classContent = el.getChildren();
+    Object retObj = null;
+    Class objClass = Class.forName(className);
+
+    int arrayLength = Integer.parseInt(el.getAttributeValue("length"));
+    Class classType = objClass.getComponentType();
+    retObj = Array.newInstance(classType, arrayLength);
+    objsDone.put(classId, retObj);
+    if (classType.isPrimitive()) {
+      for (int i = 0; i < arrayLength; i++) {
+        Element classEl = classContent.get(i);
+        Array.set(retObj, i, PParser.parse(classType, classEl.getText()));
+      }
+    }
+    else {
+      for (int i = 0; i < arrayLength; i++) {
+        Element classEl = classContent.get(i);
+        String ref = classEl.getText();
+        for (Element child : children) {
+          if (child.getAttributeValue("id").equals(ref)) {
+            Array.set(retObj, i, initObject(child));
+            break;
+          }
+        }
+      }
     }
     return retObj;
   }
