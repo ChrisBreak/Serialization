@@ -60,9 +60,9 @@ public class Sender {
 		System.out.println("enter id, seats, active ");
 		String input = getUserInput();
 		String[] inputArr = input.split(",");
-		int id = (int) parsePrimitive(int.class, inputArr[0].trim());
-		int seats = (int) parsePrimitive(int.class, inputArr[1].trim());
-		boolean active = (boolean) parsePrimitive(boolean.class, inputArr[2].trim());
+		int id = (int) PParser.parse(int.class, inputArr[0].trim());
+		int seats = (int) PParser.parse(int.class, inputArr[1].trim());
+		boolean active = (boolean) PParser.parse(boolean.class, inputArr[2].trim());
 		Airplane airP = new Airplane(id, seats, active);
 		return airP;
 	}
@@ -73,13 +73,13 @@ public class Sender {
 		String input = getUserInput();
 		String[] inputArr = input.split(",", 3);
 		String name = inputArr[0];
-		int age = (int) parsePrimitive(int.class, inputArr[1].trim());
+		int age = (int) PParser.parse(int.class, inputArr[1].trim());
 		String ratingStr = inputArr[2].trim();
 		ratingStr = ratingStr.substring(1);
 		String[] ratingArr = ratingStr.split(",");
 		int[] ratings = new int[ratingArr.length];
 		for (int i = 0; i < ratings.length; i++) {
-			ratings[i] = (int) parsePrimitive(int.class, ratingArr[i].trim());
+			ratings[i] = (int) PParser.parse(int.class, ratingArr[i].trim());
 		}
 		Pilot pilot = new Pilot(name, age, ratings);
 		return pilot;
@@ -90,8 +90,8 @@ public class Sender {
 		System.out.println("enter length, width");
 		String input = getUserInput();
 		String[] inputArr = input.split(",", 2);
-		int length = (int) parsePrimitive(int.class, inputArr[0].trim());
-		int width = (int) parsePrimitive(int.class, inputArr[1].trim());
+		int length = (int) PParser.parse(int.class, inputArr[0].trim());
+		int width = (int) PParser.parse(int.class, inputArr[1].trim());
 		System.out.println("set Airport(String location)\nenter location");
 		String location = getUserInput();
 		Airport airport = new Airport();
@@ -105,7 +105,7 @@ public class Sender {
 		System.out.println("enter location");
 		String location = getUserInput();
 		System.out.println("enter length of Airplane[] onSite");
-		int arrLength = (int) parsePrimitive(int.class, getUserInput());
+		int arrLength = (int) PParser.parse(int.class, getUserInput());
 		Airplane[] onSite = new Airplane[arrLength];
 		for (int i = 0; i < arrLength; i++) {
 			onSite[i] = (Airplane) createAirplane();
@@ -116,7 +116,7 @@ public class Sender {
 
 	private Object createCollection() {
 		System.out.println("enter length of collection");
-		int arrLength = (int) parsePrimitive(int.class, getUserInput());
+		int arrLength = (int) PParser.parse(int.class, getUserInput());
 		System.out.println("\nChoose type of collection:\nA - Airplane\nB - Runway");
 		String input = getUserInput();
 		ArrayList<Object> objCollect = new ArrayList<Object>(arrLength);
@@ -168,19 +168,6 @@ public class Sender {
 		Scanner sc = new Scanner(System.in);
 		return sc.nextLine().trim();
 	}
-
-	private Object parsePrimitive(Class objClass, String value) {
-		if (value.equals("") || value.equals("null") || value == null) return null;
-    if (objClass == int.class) return Integer.parseInt(value);
-    else if (objClass == boolean.class) return Boolean.parseBoolean(value);
-    else if (objClass == char.class) return value.charAt(0);
-    else if (objClass == float.class) return Float.parseFloat(value);
-    else if (objClass == double.class) return Double.parseDouble(value);
-    else if (objClass == long.class) return Long.parseLong(value);
-    else if (objClass == byte.class) return Byte.parseByte(value);
-    else if (objClass == short.class) return Short.parseShort(value);
-    return null;
-  }
 
 	private void shutdown() {
 		try {

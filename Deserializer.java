@@ -46,7 +46,7 @@ public class Deserializer {
 
           if ((value != null) && !(Modifier.isFinal(classField.getModifiers()) && Modifier.isStatic(classField.getModifiers()))) {
             String val = value.getText();
-            Object fieldValue = parsePrimitive(classField.getType(), val);
+            Object fieldValue = PParser.parse(classField.getType(), val);
             classField.set(retObj, fieldValue);
           }
           else if ((reference != null) && !(Modifier.isFinal(classField.getModifiers()) && Modifier.isStatic(classField.getModifiers()))) {
@@ -68,7 +68,7 @@ public class Deserializer {
         if (classType.isPrimitive()) {
           for (int i = 0; i < arrayLength; i++) {
             Element classEl = classContent.get(i);
-            Array.set(retObj, i, parsePrimitive(classType, classEl.getText()));
+            Array.set(retObj, i, PParser.parse(classType, classEl.getText()));
           }
         }
         else {
@@ -89,18 +89,6 @@ public class Deserializer {
       e.printStackTrace();
     }
     return retObj;
-  }
-
-  private Object parsePrimitive(Class objClass, String value) {
-    if (objClass == int.class) return Integer.parseInt(value);
-    else if (objClass == boolean.class) return Boolean.parseBoolean(value);
-    else if (objClass == char.class) return value.charAt(0);
-    else if (objClass == float.class) return Float.parseFloat(value);
-    else if (objClass == double.class) return Double.parseDouble(value);
-    else if (objClass == long.class) return Long.parseLong(value);
-    else if (objClass == byte.class) return Byte.parseByte(value);
-    else if (objClass == short.class) return Short.parseShort(value);
-    return value;
   }
 
 }
